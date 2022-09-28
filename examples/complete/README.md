@@ -1,5 +1,5 @@
 <!-- BEGIN_TF_DOCS -->
-# Fibre-Channel Pool Example
+# UCS Server Profile Example
 
 To run this example you need to execute:
 
@@ -13,23 +13,38 @@ Note that this example will create resources. Resources can be destroyed with `t
 
 ### main.tf
 ```hcl
-module "wwpn_pool" {
-  source  = "scotttyso/pools-fc/intersight"
+module "server" {
+  source  = "terraform-cisco-modules/profiles-server/intersight"
   version = ">= 1.0.1"
 
-  assignment_order = "sequential"
-  description      = "Demo WWPN Pool"
-  id_blocks = [
-    {
-      from = "0:00:00:25:B5:00:00:00"
-      size = 1000
+  action              = "No-Op"
+  description         = "default Server Profile."
+  name                = "default"
+  organization        = "default"
+  serial_number       = "FO1324556"
+  target_platform     = "FIAttached"
+  uuid_pool           = "default"
+  wait_for_completion = false
+}
+```
+
+### provider.tf
+```hcl
+terraform {
+  required_providers {
+    intersight = {
+      source  = "CiscoDevNet/intersight"
+      version = ">=1.0.32"
     }
-  ]
-  name         = "default"
-  organization = "default"
-  pool_purpose = "WWPN"
+  }
+  required_version = ">=1.3.0"
 }
 
+provider "intersight" {
+  apikey    = var.apikey
+  endpoint  = var.endpoint
+  secretkey = var.secretkey
+}
 ```
 
 ### variables.tf
@@ -50,24 +65,6 @@ variable "secretkey" {
   description = "Intersight Secret Key."
   sensitive   = true
   type        = string
-}
-```
-
-### versions.tf
-```hcl
-terraform {
-  required_providers {
-    intersight = {
-      source  = "CiscoDevNet/intersight"
-      version = ">=1.0.32"
-    }
-  }
-}
-
-provider "intersight" {
-  apikey    = var.apikey
-  endpoint  = var.endpoint
-  secretkey = var.secretkey
 }
 ```
 <!-- END_TF_DOCS -->

@@ -123,7 +123,7 @@ resource "intersight_server_profile" "server" {
     content {
       moid = length(
         regexall("[[:xdigit:]]{24}", var.server_template)
-      ) > 0 ? var.server_template : data.intersight_server_profile_template.template[
+        ) > 0 ? var.server_template : data.intersight_server_profile_template.template[
         src_template.value].results[0
       ].moid
     }
