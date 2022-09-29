@@ -6,9 +6,7 @@
 
 data "intersight_organization_organization" "org_moid" {
   for_each = {
-    for v in [var.organization] : v => v if length(
-      regexall("[[:xdigit:]]{24}", var.organization)
-    ) == 0
+    for v in [var.organization] : v => v if var.moids == false
   }
   name = each.value
 }
@@ -27,9 +25,7 @@ data "intersight_compute_physical_summary" "server" {
 
 data "intersight_resourcepool_pool" "resource_pool" {
   for_each = {
-    for v in compact([var.resource_pool]) : v => v if length(
-      regexall("[[:xdigit:]]{24}", var.resource_pool)
-    ) == 0
+    for v in compact([var.resource_pool]) : v => v if var.moids == false
   }
   name = each.value
 }
@@ -45,9 +41,7 @@ data "intersight_server_profile_template" "template" {
 
 data "intersight_uuidpool_pool" "uuid_pool" {
   for_each = {
-    for v in compact([var.uuid_pool]) : v => v if length(
-      regexall("[[:xdigit:]]{24}", var.uuid_pool)
-    ) == 0
+    for v in compact([var.uuid_pool]) : v => v if var.moids == false
   }
   name = each.value
 }
@@ -80,8 +74,7 @@ resource "intersight_server_profile" "server" {
   ) > 0 ? "POOL" : length(compact([var.static_uuid_address])) > 0 ? "STATIC" : "NONE"
   wait_for_completion = var.wait_for_completion
   organization {
-    moid = length(
-      regexall("[[:xdigit:]]{24}", var.organization)
+    moid = length(regexall(true, var.moids)
       ) > 0 ? var.organization : data.intersight_organization_organization.org_moid[
       var.organization].results[0
     ].moid
@@ -103,9 +96,9 @@ resource "intersight_server_profile" "server" {
   dynamic "associated_server_pool" {
     for_each = { for v in compact([var.resource_pool]) : v => v }
     content {
-      moid = length(
-        regexall("[[:xdigit:]]{24}", var.resource_pool)
-        ) > 0 ? var.resource_pool : data.intersight_resourcepool_pool.resource_pool[
+      moid = length(regexall(true, var.moids)
+        ) > 0 ? var.pools.resource_pool[associated_server_pool.value
+        ].moid : data.intersight_resourcepool_pool.resource_pool[
         associated_server_pool.value
       ].moid
       object_type = "resourcepool.Pool"
@@ -138,9 +131,9 @@ resource "intersight_server_profile" "server" {
   dynamic "uuid_pool" {
     for_each = { for v in compact([var.uuid_pool]) : v => v }
     content {
-      moid = length(
-        regexall("[[:xdigit:]]{24}", var.resource_pool)
-      ) > 0 ? var.resource_pool : data.intersight_uuidpool_pool.uuid_pool[uuid_pool.value].results[0].moid
+      moid = length(regexall(true, var.moids)
+        ) > 0 ? var.pools.uuid[uuid_pool.value
+      ].moid : data.intersight_uuidpool_pool.uuid_pool[uuid_pool.value].results[0].moid
       object_type = "uuidpool.Pool"
     }
   }

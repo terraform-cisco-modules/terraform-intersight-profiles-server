@@ -103,9 +103,11 @@ $env:TF_VAR_secretkey="<secret-key-file-location>""
 | <a name="input_secretkey"></a> [secretkey](#input\_secretkey) | Intersight Secret Key. | `string` | n/a | yes |
 | <a name="input_action"></a> [action](#input\_action) | Action to Perform on the Chassis Profile Assignment.  Options are:<br>* Deploy<br>* No-op<br>* Unassign | `string` | `"No-op"` | no |
 | <a name="input_description"></a> [description](#input\_description) | Description for the Profile. | `string` | `""` | no |
+| <a name="input_moids"></a> [moids](#input\_moids) | Flag to Determine if pools and policies should be data sources or if they already defined as a moid. | `bool` | `false` | no |
 | <a name="input_name"></a> [name](#input\_name) | Name for the Profile. | `string` | `"default"` | no |
 | <a name="input_organization"></a> [organization](#input\_organization) | Intersight Organization Name to Apply Policy to.  https://intersight.com/an/settings/organizations/. | `string` | `"default"` | no |
 | <a name="input_policy_bucket"></a> [policy\_bucket](#input\_policy\_bucket) | List of Policies to Assign to the Profile. | <pre>list(object(<br>    {<br>      moid        = string<br>      object_type = string<br>    }<br>  ))</pre> | `[]` | no |
+| <a name="input_pools"></a> [pools](#input\_pools) | Map for Moid based Pool Sources. | `any` | `{}` | no |
 | <a name="input_resource_pool"></a> [resource\_pool](#input\_resource\_pool) | Name of the Server Resource Pool to assign to the Policy. | `string` | `""` | no |
 | <a name="input_serial_number"></a> [serial\_number](#input\_serial\_number) | Serial Number of the Chassis to Assign. | `string` | `""` | no |
 | <a name="input_server_template"></a> [server\_template](#input\_server\_template) | The Name of the Server Template to Assign to the Server. | `string` | `""` | no |

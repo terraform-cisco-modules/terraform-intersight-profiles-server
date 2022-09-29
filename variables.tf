@@ -20,6 +20,12 @@ variable "description" {
   type        = string
 }
 
+variable "moids" {
+  default     = false
+  description = "Flag to Determine if pools and policies should be data sources or if they already defined as a moid."
+  type        = bool
+}
+
 variable "name" {
   default     = "default"
   description = "Name for the Profile."
@@ -41,6 +47,12 @@ variable "policy_bucket" {
       object_type = string
     }
   ))
+}
+
+variable "pools" {
+  default     = {}
+  description = "Map for Moid based Pool Sources."
+  type        = any
 }
 
 variable "resource_pool" {
