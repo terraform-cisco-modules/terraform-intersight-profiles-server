@@ -139,6 +139,7 @@ $env:TF_VAR_secretkey="<secret-key-file-location>""
 | [intersight_iam_ldap_policy.ldap](https://registry.terraform.io/providers/CiscoDevNet/intersight/latest/docs/data-sources/iam_ldap_policy) | data source |
 | [intersight_ipmioverlan_policy.ipmi_over_lan](https://registry.terraform.io/providers/CiscoDevNet/intersight/latest/docs/data-sources/ipmioverlan_policy) | data source |
 | [intersight_kvm_policy.virtual_kvm](https://registry.terraform.io/providers/CiscoDevNet/intersight/latest/docs/data-sources/kvm_policy) | data source |
+| [intersight_memory_persistent_memory_policy.persistent_memory](https://registry.terraform.io/providers/CiscoDevNet/intersight/latest/docs/data-sources/memory_persistent_memory_policy) | data source |
 | [intersight_networkconfig_policy.network_connectivity](https://registry.terraform.io/providers/CiscoDevNet/intersight/latest/docs/data-sources/networkconfig_policy) | data source |
 | [intersight_ntp_policy.ntp](https://registry.terraform.io/providers/CiscoDevNet/intersight/latest/docs/data-sources/ntp_policy) | data source |
 | [intersight_organization_organization.org_moid](https://registry.terraform.io/providers/CiscoDevNet/intersight/latest/docs/data-sources/organization_organization) | data source |

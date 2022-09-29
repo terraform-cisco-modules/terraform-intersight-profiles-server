@@ -107,13 +107,12 @@ data "intersight_ntp_policy" "ntp" {
   name = each.value.name
 }
 
-# data "intersight_memory_persistent_memory_policy" "persistent_memory" {
-#   for_each = {
-#     for v in var.policy_bucket
-#     ) : v.name => v if var.moids == false && v.object_type == "memory.PersistentMemoryPolicy"
-#   }
-#   name = each.value.name
-# }
+data "intersight_memory_persistent_memory_policy" "persistent_memory" {
+  for_each = {
+    for v in var.policy_bucket : v.name => v if var.moids == false && v.object_type == "memory.PersistentMemoryPolicy"
+  }
+  name = each.value.name
+}
 
 data "intersight_power_policy" "power" {
   for_each = {
