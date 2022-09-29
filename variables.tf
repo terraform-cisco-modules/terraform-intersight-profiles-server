@@ -38,13 +38,20 @@ variable "organization" {
   type        = string
 }
 
+variable "policies" {
+  default     = {}
+  description = "Map for Moid based Policy Sources."
+  type        = any
+}
+
 variable "policy_bucket" {
   default     = []
   description = "List of Policies to Assign to the Profile."
   type = list(object(
     {
-      moid        = string
+      name        = string
       object_type = string
+      policy      = optional(string)
     }
   ))
 }
