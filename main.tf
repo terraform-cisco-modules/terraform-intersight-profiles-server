@@ -214,6 +214,13 @@ data "intersight_uuidpool_pool" "uuid_pool" {
   name = each.value
 }
 
+locals {
+  org_moid = length(regexall(true, var.moids)
+  ) > 0 ? var.organization : data.intersight_organization_organization.org_moid[
+    var.organization].results[0
+  ].moid
+}
+
 #____________________________________________________________
 #
 # Intersight UCS Server Profile Resource
@@ -278,54 +285,85 @@ resource "intersight_server_profile" "server" {
       moid = length(regexall(true, var.moids)
         ) > 0 ? var.policies[policy_bucket.value.policy][policy_bucket.value.name
         ] : length(regexall("adapter.ConfigPolicy", policy_bucket.value.object_type)
-        ) > 0 ? data.intersight_adapter_config_policy.adapter_configuration[policy_bucket.value.name].results[0
-        ].moid : length(regexall("bios.Policy", policy_bucket.value.object_type)
-        ) > 0 ? data.intersight_bios_policy.bios[policy_bucket.value.name].results[0
-        ].moid : length(regexall("boot.PrecisionPolicy", policy_bucket.value.object_type)
-        ) > 0 ? data.intersight_boot_precision_policy.boot_order[policy_bucket.value.name].results[0
-        ].moid : length(regexall("certificatemanagement.Policy", policy_bucket.value.object_type)
-        ) > 0 ? data.intersight_certificatemanagement_policy.certificate_management[policy_bucket.value.name].results[0
-        ].moid : length(regexall("deviceconnector.Policy", policy_bucket.value.object_type)
-        ) > 0 ? data.intersight_deviceconnector_policy.device_connector[policy_bucket.value.name].results[0
-        ].moid : length(regexall("access.Policy", policy_bucket.value.object_type)
-        ) > 0 ? data.intersight_access_policy.imc_access[policy_bucket.value.name].results[0
-        ].moid : length(regexall("ipmioverlan.Policy", policy_bucket.value.object_type)
-        ) > 0 ? data.intersight_ipmioverlan_policy.ipmi_over_lan[policy_bucket.value.name].results[0
-        ].moid : length(regexall("vnic.LanConnectivityPolicy", policy_bucket.value.object_type)
-        ) > 0 ? data.intersight_vnic_lan_connectivity_policy.lan_connectivity[policy_bucket.value.name].results[0
-        ].moid : length(regexall("iam.LdapPolicy", policy_bucket.value.object_type)
-        ) > 0 ? data.intersight_iam_ldap_policy.ldap[policy_bucket.value.name].results[0
-        ].moid : length(regexall("iam.EndPointUserPolicy", policy_bucket.value.object_type)
-        ) > 0 ? data.intersight_iam_end_point_user_policy.local_user[policy_bucket.value.name].results[0
-        ].moid : length(regexall("networkconfig.Policy", policy_bucket.value.object_type)
-        ) > 0 ? data.intersight_networkconfig_policy.network_connectivity[policy_bucket.value.name].results[0
-        ].moid : length(regexall("ntp.Policy", policy_bucket.value.object_type)
-        ) > 0 ? data.intersight_ntp_policy.ntp[policy_bucket.value.name].results[0
-        ].moid : length(regexall("memory.PersistentMemoryPolicy", policy_bucket.value.object_type)
-        ) > 0 ? data.intersight_memory_persistent_memory_policy.persistent_memory[policy_bucket.value.name].results[0
-        ].moid : length(regexall("power.Policy", policy_bucket.value.object_type)
-        ) > 0 ? data.intersight_power_policy.power[policy_bucket.value.name].results[0
-        ].moid : length(regexall("vnic.SanConnectivityPolicy", policy_bucket.value.object_type)
-        ) > 0 ? data.intersight_vnic_san_connectivity_policy.san_connectivity[policy_bucket.value.name].results[0
-        ].moid : length(regexall("sdcard.Policy", policy_bucket.value.object_type)
-        ) > 0 ? data.intersight_sdcard_policy.sd_card[policy_bucket.value.name].results[0
-        ].moid : length(regexall("sol.Policy", policy_bucket.value.object_type)
-        ) > 0 ? data.intersight_sol_policy.serial_over_lan[policy_bucket.value.name].results[0
-        ].moid : length(regexall("smtp.Policy", policy_bucket.value.object_type)
-        ) > 0 ? data.intersight_smtp_policy.smtp[policy_bucket.value.name].results[0
-        ].moid : length(regexall("snmp.Policy", policy_bucket.value.object_type)
-        ) > 0 ? data.intersight_snmp_policy.snmp[policy_bucket.value.name].results[0
-        ].moid : length(regexall("ssh.Policy", policy_bucket.value.object_type)
-        ) > 0 ? data.intersight_ssh_policy.ssh[policy_bucket.value.name].results[0
-        ].moid : length(regexall("storage.StoragePolicy", policy_bucket.value.object_type)
-        ) > 0 ? data.intersight_storage_storage_policy.storage[policy_bucket.value.name].results[0
-        ].moid : length(regexall("syslog.Policy", policy_bucket.value.object_type)
-        ) > 0 ? data.intersight_syslog_policy.syslog[policy_bucket.value.name].results[0
-        ].moid : length(regexall("kvm.Policy", policy_bucket.value.object_type)
-        ) > 0 ? data.intersight_kvm_policy.virtual_kvm[policy_bucket.value.name].results[0
-        ].moid : length(regexall("vmedia.Policy", policy_bucket.value.object_type)
-        ) > 0 ? data.intersight_vmedia_policy.virtual_media[policy_bucket.value.name].results[0
-      ].moid : ""
+        ) > 0 ? [for i in data.intersight_adapter_config_policy.adapter_configuration[
+          policy_bucket.value.name
+        ].results : i.moid if i.organization[0].moid == local.org_moid
+        ][0] : length(regexall("bios.Policy", policy_bucket.value.object_type)
+        ) > 0 ? [for i in data.intersight_bios_policy.bios[policy_bucket.value.name
+        ].results : i.moid if i.organization[0].moid == local.org_moid
+        ][0] : length(regexall("boot.PrecisionPolicy", policy_bucket.value.object_type)
+        ) > 0 ? [for i in data.intersight_boot_precision_policy.boot_order[policy_bucket.value.name
+        ].results : i.moid if i.organization[0].moid == local.org_moid
+        ][0] : length(regexall("certificatemanagement.Policy", policy_bucket.value.object_type)
+        ) > 0 ? [for i in data.intersight_certificatemanagement_policy.certificate_management[
+          policy_bucket.value.name
+        ].results : i.moid if i.organization[0].moid == local.org_moid
+        ][0] : length(regexall("deviceconnector.Policy", policy_bucket.value.object_type)
+        ) > 0 ? [for i in data.intersight_deviceconnector_policy.device_connector[
+          policy_bucket.value.name
+        ].results : i.moid if i.organization[0].moid == local.org_moid
+        ][0] : length(regexall("access.Policy", policy_bucket.value.object_type)
+        ) > 0 ? [for i in data.intersight_access_policy.imc_access[policy_bucket.value.name
+        ].results : i.moid if i.organization[0].moid == local.org_moid
+        ][0] : length(regexall("ipmioverlan.Policy", policy_bucket.value.object_type)
+        ) > 0 ? [for i in data.intersight_ipmioverlan_policy.ipmi_over_lan[policy_bucket.value.name
+        ].results : i.moid if i.organization[0].moid == local.org_moid
+        ][0] : length(regexall("vnic.LanConnectivityPolicy", policy_bucket.value.object_type)
+        ) > 0 ? [for i in data.intersight_vnic_lan_connectivity_policy.lan_connectivity[
+          policy_bucket.value.name
+        ].results : i.moid if i.organization[0].moid == local.org_moid
+        ][0] : length(regexall("iam.LdapPolicy", policy_bucket.value.object_type)
+        ) > 0 ? [for i in data.intersight_iam_ldap_policy.ldap[policy_bucket.value.name
+        ].results : i.moid if i.organization[0].moid == local.org_moid
+        ][0] : length(regexall("iam.EndPointUserPolicy", policy_bucket.value.object_type)
+        ) > 0 ? [for i in data.intersight_iam_end_point_user_policy.local_user[policy_bucket.value.name
+        ].results : i.moid if i.organization[0].moid == local.org_moid
+        ][0] : length(regexall("networkconfig.Policy", policy_bucket.value.object_type)
+        ) > 0 ? [for i in data.intersight_networkconfig_policy.network_connectivity[
+          policy_bucket.value.name
+        ].results : i.moid if i.organization[0].moid == local.org_moid
+        ][0] : length(regexall("ntp.Policy", policy_bucket.value.object_type)
+        ) > 0 ? [for i in data.intersight_ntp_policy.ntp[policy_bucket.value.name
+        ].results : i.moid if i.organization[0].moid == local.org_moid
+        ][0] : length(regexall("memory.PersistentMemoryPolicy", policy_bucket.value.object_type)
+        ) > 0 ? [for i in data.intersight_memory_persistent_memory_policy.persistent_memory[
+          policy_bucket.value.name
+        ].results : i.moid if i.organization[0].moid == local.org_moid
+        ][0] : length(regexall("power.Policy", policy_bucket.value.object_type)
+        ) > 0 ? [for i in data.intersight_power_policy.power[policy_bucket.value.name
+        ].results : i.moid if i.organization[0].moid == local.org_moid
+        ][0] : length(regexall("vnic.SanConnectivityPolicy", policy_bucket.value.object_type)
+        ) > 0 ? [for i in data.intersight_vnic_san_connectivity_policy.san_connectivity[
+          policy_bucket.value.name
+        ].results : i.moid if i.organization[0].moid == local.org_moid
+        ][0] : length(regexall("sdcard.Policy", policy_bucket.value.object_type)
+        ) > 0 ? [for i in data.intersight_sdcard_policy.sd_card[policy_bucket.value.name
+        ].results : i.moid if i.organization[0].moid == local.org_moid
+        ][0] : length(regexall("sol.Policy", policy_bucket.value.object_type)
+        ) > 0 ? [for i in data.intersight_sol_policy.serial_over_lan[policy_bucket.value.name
+        ].results : i.moid if i.organization[0].moid == local.org_moid
+        ][0] : length(regexall("smtp.Policy", policy_bucket.value.object_type)
+        ) > 0 ? [for i in data.intersight_smtp_policy.smtp[policy_bucket.value.name
+        ].results : i.moid if i.organization[0].moid == local.org_moid
+        ][0] : length(regexall("snmp.Policy", policy_bucket.value.object_type)
+        ) > 0 ? [for i in data.intersight_snmp_policy.snmp[policy_bucket.value.name
+        ].results : i.moid if i.organization[0].moid == local.org_moid
+        ][0] : length(regexall("ssh.Policy", policy_bucket.value.object_type)
+        ) > 0 ? [for i in data.intersight_ssh_policy.ssh[policy_bucket.value.name
+        ].results : i.moid if i.organization[0].moid == local.org_moid
+        ][0] : length(regexall("storage.StoragePolicy", policy_bucket.value.object_type)
+        ) > 0 ? [for i in data.intersight_storage_storage_policy.storage[policy_bucket.value.name
+        ].results : i.moid if i.organization[0].moid == local.org_moid
+        ][0] : length(regexall("syslog.Policy", policy_bucket.value.object_type)
+        ) > 0 ? [for i in data.intersight_syslog_policy.syslog[policy_bucket.value.name
+        ].results : i.moid if i.organization[0].moid == local.org_moid
+        ][0] : length(regexall("kvm.Policy", policy_bucket.value.object_type)
+        ) > 0 ? [for i in data.intersight_kvm_policy.virtual_kvm[policy_bucket.value.name
+        ].results : i.moid if i.organization[0].moid == local.org_moid
+        ][0] : length(regexall("vmedia.Policy", policy_bucket.value.object_type)
+        ) > 0 ? [for i in data.intersight_vmedia_policy.virtual_media[policy_bucket.value.name
+        ].results : i.moid if i.organization[0].moid == local.org_moid
+        ][0] : ""
       object_type = policy_bucket.value.object_type
     }
   }
