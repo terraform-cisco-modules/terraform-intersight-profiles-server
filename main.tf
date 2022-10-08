@@ -216,7 +216,7 @@ data "intersight_uuidpool_pool" "uuid_pool" {
 
 locals {
   org_moid = length(regexall(true, var.moids)
-  ) > 0 ? var.organization : data.intersight_organization_organization.org_moid[
+    ) > 0 ? var.organization : data.intersight_organization_organization.org_moid[
     var.organization].results[0
   ].moid
 }
@@ -363,7 +363,7 @@ resource "intersight_server_profile" "server" {
         ][0] : length(regexall("vmedia.Policy", policy_bucket.value.object_type)
         ) > 0 ? [for i in data.intersight_vmedia_policy.virtual_media[policy_bucket.value.name
         ].results : i.moid if i.organization[0].moid == local.org_moid
-        ][0] : ""
+      ][0] : ""
       object_type = policy_bucket.value.object_type
     }
   }
