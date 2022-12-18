@@ -389,7 +389,7 @@ resource "intersight_server_profile" "server" {
     content {
       moid = length(regexall(true, var.moids)
         ) > 0 ? var.pools.uuid[uuid_pool.value
-        ].moid : [for i in data.intersight_uuidpool_pool.uuid_pool[uuid_pool.value
+        ] : [for i in data.intersight_uuidpool_pool.uuid_pool[uuid_pool.value
         ].results : i.moid if i.organization[0].moid == local.org_moid
       ][0]
       object_type = "uuidpool.Pool"
